@@ -10,8 +10,13 @@
   }
 
   <div class="grid grid-cols-1 md:grid-cols-5 gap-8"> <!-- Use grid for layout -->
-    <!-- Expense List Column (60%) -->
-    <div class="md:col-span-3"> <!-- Takes 3 out of 5 columns (60%) -->
+    <!-- Todo List Column (40%) - Displays first on mobile, last on desktop -->
+    <div class="md:col-span-2 order-first md:order-last"> <!-- order-first on mobile, md:order-last on desktop -->
+      <app-todo></app-todo>
+    </div>
+
+    <!-- Expense List Column (60%) - Displays second on mobile, first on desktop -->
+    <div class="md:col-span-3 order-last md:order-first"> <!-- order-last on mobile, md:order-first on desktop -->
       <div class="flex justify-end mb-4 space-x-3">
         <button routerLink="/expenses/recurring"
                 class="bg-purple-600 hover:bg-purple-700 dark:bg-purple-800 dark:hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
@@ -64,7 +69,7 @@
                       </button>
                     </div>
                   </li>
-                } @empty { <!-- Corrected placement of @empty block -->
+                } @empty {
                   <li class="p-4 text-gray-600 dark:text-gray-400 italic">No expenses for this month.</li>
                 }
               </ul>
@@ -72,11 +77,6 @@
           }
         </div>
       }
-    </div>
-
-    <!-- Todo List Column (40%) -->
-    <div class="md:col-span-2"> <!-- Takes 2 out of 5 columns (40%) -->
-      <app-todo></app-todo>
     </div>
   </div>
 </div>

@@ -16,6 +16,6 @@ export const routes: Routes = [
   { path: 'reports/monthly', component: MonthlyReportComponent, pathMatch: "full" },
   { path: 'reports/compare', component: ExpenseComparisonComponent },
   { path: 'expenses/recurring', component: RecurringExpensesComponent },
-  { path: 'todo', component: TodoListComponent },
+  { path: 'todos', component: TodoListComponent },
   { path: '**', redirectTo: '/expenses' } // Wildcard route for any unmatched URL
 ];
