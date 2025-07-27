@@ -1,0 +1,100 @@
+<!-- src/app/expense-comparison/expense-comparison.component.html -->
+<div class="container mx-auto p-4 max-w-5xl">
+  <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">Compare Monthly Expenditures</h2>
+
+  @if (errorMessage) {
+    <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded relative mb-4" role="alert">
+      <strong class="font-bold">Error!</strong>
+      <span class="block sm:inline"> {{ errorMessage }}</span>
+    </div>
+  }
+
+  <form [formGroup]="comparisonForm" (ngSubmit)="onSubmit()" class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label for="month1" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Select Month 1:</label>
+        <select id="month1" formControlName="month1"
+                class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <option value="" disabled>Select a month</option>
+          @for (month of monthsAvailable; track month) {
+            <option [value]="month">{{ month | date:'MMMM yyyy' }}</option>
+          }
+        </select>
+        @if (comparisonForm.get('month1')?.invalid && comparisonForm.get('month1')?.touched) {
+          <div class="text-red-500 dark:text-red-400 text-xs mt-1">
+            Month 1 is required.
+          </div>
+        }
+      </div>
+      <div>
+        <label for="month2" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Select Month 2:</label>
+        <select id="month2" formControlName="month2"
+                class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <option value="" disabled>Select a month</option>
+          @for (month of monthsAvailable; track month) {
+            <option [value]="month">{{ month | date:'MMMM yyyy' }}</option>
+          }
+        </select>
+        @if (comparisonForm.get('month2')?.invalid && comparisonForm.get('month2')?.touched) {
+          <div class="text-red-500 dark:text-red-400 text-xs mt-1">
+            Month 2 is required.
+          </div>
+        }
+      </div>
+    </div>
+    <div class="flex justify-center">
+      <button type="submit"
+              [disabled]="!comparisonForm.valid"
+              class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+        Compare
+      </button>
+    </div>
+  </form>
+
+  @if (comparisonReport) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      @for (monthKey of [comparisonForm.value.month1, comparisonForm.value.month2]; track monthKey) {
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+          <h3 class="text-2xl font-semibold text-purple-700 dark:text-purple-400 mb-4">
+            {{ monthKey | date:'MMMM yyyy' }}
+          </h3>
+          <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+            <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Total Expenditure:</span>
+            <span class="text-2xl font-bold text-red-600 dark:text-red-400">{{comparisonReport[monthKey].total | currency:'INR':'symbol':'1.2-2' }}</span>
+          </div>
+
+          <h4 class="text-xl font-medium text-gray-700 dark:text-gray-300 mb-3">Breakdown by Category:</h4>
+          <ul class="divide-y divide-gray-100 dark:divide-gray-700 mb-4">
+            @for (category of getCategoriesForComparisonMonth(monthKey); track category.category) {
+              <li class="flex justify-between items-center py-2">
+                <span class="text-gray-800 dark:text-gray-200">{{ category.category }}</span>
+                <span class="font-semibold text-gray-900 dark:text-gray-100">{{ category.amount | currency:'INR':'symbol':'1.2-2' }}</span>
+              </li>
+            }
+          </ul>
+
+          <h4 class="text-xl font-medium text-gray-700 dark:text-gray-300 mb-3">Individual Expenses:</h4>
+          <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+            @for (expense of comparisonReport[monthKey].details; track expense.id) {
+              <li class="py-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-800 dark:text-gray-200">{{ expense.description }} ({{ expense.category }})</span>
+                  <span class="font-semibold text-gray-900 dark:text-gray-100">{{ expense.amount | currency:'INR':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">{{ expense.date | date:'shortDate' }}</div>
+              </li>
+            } @empty {
+              <li class="text-gray-600 dark:text-gray-400 italic py-2">
+                No expenses recorded for this month.
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  } @else if (!comparisonReport && comparisonForm.touched && !errorMessage) {
+    <div class="text-center py-8 text-gray-600 dark:text-gray-400">
+      <p class="text-lg">Select two months above and click "Compare" to see the report.</p>
+    </div>
+  }
+</div>

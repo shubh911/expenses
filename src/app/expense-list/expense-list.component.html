@@ -1,0 +1,82 @@
+<!-- src/app/expense-list/expense-list.component.html -->
+<div class="container mx-auto p-4 max-w-7xl"> <!-- Increased max-width for side-by-side layout -->
+  <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">Your Expenses & Todos</h2>
+
+  @if (errorMessage) {
+    <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded relative mb-4" role="alert">
+      <strong class="font-bold">Error!</strong>
+      <span class="block sm:inline"> {{ errorMessage }}</span>
+    </div>
+  }
+
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-8"> <!-- Use grid for layout -->
+    <!-- Expense List Column (60%) -->
+    <div class="md:col-span-3"> <!-- Takes 3 out of 5 columns (60%) -->
+      <div class="flex justify-end mb-4 space-x-3">
+        <button routerLink="/expenses/recurring"
+                class="bg-purple-600 hover:bg-purple-700 dark:bg-purple-800 dark:hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          Add Monthly Recurring Expenses
+        </button>
+        <button routerLink="/expenses/new"
+                class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          Add New Expense
+        </button>
+      </div>
+
+      @if (sortedMonths.length === 0 && !errorMessage) {
+        <div class="text-center py-8 text-gray-600 dark:text-gray-400">
+          <p class="text-lg">No expenses recorded yet. Start by adding one!</p>
+        </div>
+      } @else {
+        <div class="space-y-8">
+          @for (monthKey of sortedMonths; track monthKey) {
+            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+              <div class="bg-gray-200 dark:bg-gray-700 p-4 border-b border-gray-300 dark:border-gray-600">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                  {{ monthKey | date:'MMMM yyyy' }}
+                </h3>
+              </div>
+              <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                @for (expense of groupedExpenses[monthKey]; track expense.id) {
+                  <li class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out flex flex-col sm:flex-row justify-between items-start sm:items-center cursor-pointer"
+                      (click)="viewExpenseDetails(expense.id)">
+                    <div class="flex-1 mb-2 sm:mb-0">
+                      <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ expense.description }}</div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">{{ expense.category }}</span> - {{ expense.date | date:'mediumDate' }}
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                      <div class="text-xl font-bold text-green-600 dark:text-green-400">{{ expense.amount | currency:'INR':'symbol':'1.2-2' }}</div>
+                      <button (click)="editExpense(expense.id); $event.stopPropagation()"
+                              class="bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-700 dark:hover:bg-yellow-600 text-white p-2 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-110"
+                              title="Edit Expense">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.38-2.828-2.829z" />
+                        </svg>
+                      </button>
+                      <button (click)="deleteExpense(expense.id); $event.stopPropagation()"
+                              class="bg-red-500 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-600 text-white p-2 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-110"
+                              title="Delete Expense">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  </li>
+                } @empty { <!-- Corrected placement of @empty block -->
+                  <li class="p-4 text-gray-600 dark:text-gray-400 italic">No expenses for this month.</li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Todo List Column (40%) -->
+    <div class="md:col-span-2"> <!-- Takes 2 out of 5 columns (40%) -->
+      <app-todo></app-todo>
+    </div>
+  </div>
+</div>

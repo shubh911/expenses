@@ -1,0 +1,58 @@
+<!-- src/app/recurring-expenses/recurring-expenses.component.html -->
+<div class="container mx-auto p-4 max-w-4xl">
+  <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">Add Recurring Expenses</h2>
+
+  @if (errorMessage) {
+    <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded relative mb-4" role="alert">
+      <strong class="font-bold">Error!</strong>
+      <span class="block sm:inline"> {{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 px-4 py-3 rounded relative mb-4" role="alert">
+      <strong class="font-bold">Success!</strong>
+      <span class="block sm:inline"> {{ successMessage }}</span>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="text-center py-8 text-gray-600 dark:text-gray-400">
+      <p class="text-lg">Loading recurring expenses...</p>
+    </div>
+  } @else if (recurringExpenses.length === 0) {
+    <div class="text-center py-8 text-gray-600 dark:text-gray-400">
+      <p class="text-lg">No recurring expenses found in the last 3 months. Add more expenses to identify patterns.</p>
+    </div>
+  } @else {
+    <form [formGroup]="recurringExpensesForm" (ngSubmit)="addSelectedExpensesToCurrentMonth()" class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+      <p class="text-gray-700 dark:text-gray-300 mb-4">Select the expenses you wish to add to today's transactions:</p>
+      <ul class="divide-y divide-gray-200 dark:divide-gray-700 mb-6">
+        @for (expense of recurringExpenses; track $index) {
+          <li class="flex items-center justify-between py-3">
+            <label class="flex items-center cursor-pointer flex-grow">
+              <input type="checkbox" [formControlName]="'expense_' + $index"
+                     class="h-5 w-5 text-blue-600 dark:text-blue-400 rounded focus:ring-blue-500 dark:focus:ring-blue-400 border-gray-300 dark:border-gray-600">
+              <span class="ml-3 text-lg font-medium text-gray-900 dark:text-gray-100">
+                {{ expense.description }} ({{ expense.category }})
+              </span>
+            </label>
+            <span class="text-xl font-bold text-green-600 dark:text-green-400">${{ expense.amount | currency:'INR':'symbol':'1.2-2' }}</span>
+          </li>
+        }
+      </ul>
+
+      <div class="flex justify-between items-center">
+        <button type="submit"
+                [disabled]="!recurringExpensesForm.valid || recurringExpensesForm.pristine"
+                class="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+          Add Selected Expenses
+        </button>
+        <button type="button" (click)="goBack()"
+                class="bg-gray-500 hover:bg-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105">
+          Cancel
+        </button>
+      </div>
+    </form>
+  }
+</div>
