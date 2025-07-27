@@ -9,7 +9,7 @@ import { Expense, MonthlyReport, ComparisonReport, RecurringExpense, ExpenseTag 
 })
 
 export class ExpenseService {
-  private apiUrl = 'http://localhost:3000'; // Your Node.js backend URL
+  private apiUrl = 'https://expenses-backend-0hq6.onrender.com'; // Your Node.js backend URL
 
   constructor(private http: HttpClient) { }
 
