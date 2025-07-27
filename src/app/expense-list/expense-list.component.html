@@ -43,7 +43,7 @@
               </div>
               <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                 @for (expense of groupedExpenses[monthKey]; track expense.id) {
-                  <li class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out flex flex-col sm:flex-row justify-between items-start sm:items-center cursor-pointer"
+                  <li class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out flex flex-row justify-between items-start sm:items-center cursor-pointer"
                       (click)="viewExpenseDetails(expense.id)">
                     <div class="flex-1 mb-2 sm:mb-0">
                       <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ expense.description }}</div>
