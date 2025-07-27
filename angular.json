@@ -95,6 +95,13 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+           "options": {
+            "baseHref": "/expenses/", 
+            "outputPath": "dist//expense-frontend" 
+          }
         }
       }
     }
